@@ -9,7 +9,7 @@ services:
       - voicebox
 
   voicebox:
-    image: voicevox/voicevox_engine:cpu-ubuntu20.04-latest
+    image: voicevox/voicevox_engine:cpu-latest
     container_name: voicebox
     ports:
       - "50021:50021"

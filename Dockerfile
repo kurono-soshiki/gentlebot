@@ -7,17 +7,20 @@ RUN apt-get update && apt-get install -y ffmpeg curl
 WORKDIR /app
 
 # Install poetry
-RUN curl -sSL https://install.python-poetry.org | python3 -
+RUN curl -sSL https://install.python-poetry.org | python3
 ENV PATH="/root/.local/bin:/root/.poetry/bin:$PATH"
 
-# Copy the poetry files
+# Poetryを使って依存関係をインストール
 COPY pyproject.toml poetry.lock /app/
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-interaction --no-root
 
-# Configure poetry
-RUN poetry config virtualenvs.create false
-RUN poetry install
+# アプリケーションをコピー
+COPY src/ /app/src/
 
+# PYTHONPATHを追加
+ENV PYTHONPATH=/app/src
 
-# Create entrypoint
-CMD ["poetry", "run", "python3", "src/main.py"]
+# Run the application
+CMD ["python3", "src/main.py"]
 

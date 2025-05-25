@@ -84,7 +84,9 @@ class VoiceBox:
     
     def local_speakers_json(self):
         # ローカルに保存しているjsonを読み込む
-        json_open = open("src/voice.json", 'r')
+        import os
+        json_path = os.path.join(os.path.dirname(__file__), 'voice.json')
+        json_open = open(json_path, 'r')
         json_load = json.load(json_open)
         return json_load
 

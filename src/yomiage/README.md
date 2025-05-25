@@ -1,8 +1,4 @@
-## 起動方法
-
-```
-$ sudo docker compose up -d --build
-```
+# Discord 読み上げbotです
 
 ## 読み上げ使い方
 
@@ -16,10 +12,10 @@ $ sudo docker compose up -d --build
 
 ### VCにbotを参加させる
 
-現在のVCに参加する、/set_read_channelの機能を内包している  
+現在のVCに参加する、/set_read_channelの機能を内包している
 /join
 
-VCから退出する、ユーザーがVCから退出した場合も自動で退出する  
+VCから退出する、ユーザーがVCから退出した場合も自動で退出する
 /leave
 
 ### 読み上げる
@@ -31,7 +27,7 @@ VCにbotが参加している状態で、登録したテキストチャンネル
 読み上げの音声を変更する  
 /set_voice <音声名>  
 
-読み上げの音声のスタイルを変更する  
+読み上げの音声のスタイルを変更する
 /set_voice_style <スタイル名>
 
 読み上げの速度を変更する  
