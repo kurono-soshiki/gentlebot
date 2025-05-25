@@ -3,6 +3,7 @@ import os
 import discord
 import google.genai as genai
 import config
+from typing import Tuple
 
 
 @dataclass
