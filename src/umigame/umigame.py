@@ -96,12 +96,12 @@ class UmigameGame:
         if "正解" in answer:
             correct = True
             answer = "正解"
-        elif "はい" in answer:
-            answer = "はい"
         elif "おおむねはい" in answer:
             answer = "おおむねはい"
         elif "おおむねいいえ" in answer:
             answer = "おおむねいいえ"
+        elif "はい" in answer:
+            answer = "はい"
         elif "いいえ" in answer:
             answer = "いいえ"
         elif "わからない" in answer:

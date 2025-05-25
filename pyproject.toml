@@ -14,7 +14,16 @@ python-dotenv = "^1.0.1"
 discord-py = {extras = ["voice"], version = "^2.4.0"}
 google-genai = "^1.14.0"
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-asyncio = "^0.23.0"
+pytest-cov = "^4.1.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["src"]
+python_files = "*_test.py"
+python_functions = "test_*"
