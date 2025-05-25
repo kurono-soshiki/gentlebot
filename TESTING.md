@@ -74,8 +74,8 @@ Tests are organized alongside their respective modules:
 
    ```python
    @unittest.skipIf(not getattr(config, 'GEMINI_API_KEY', None), "GEMINI_API_KEY is not set")
-   def test_real_api_call(self):
-       # Test implementation
+   def test_gemini_generate_real_api(self):
+       # Test implementation for real API call
    ```
 
 ## Continuous Integration
