@@ -8,7 +8,7 @@ from ytdl_wrapper import YTDLSource
 
 # --- DB定義 ---
 class server_setting(TypedDict):
-    read_channel: str
+    read_channel: Optional[int]
 
 class user_setting(TypedDict):
     speaker_id: int
