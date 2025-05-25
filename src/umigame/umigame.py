@@ -76,7 +76,7 @@ class UmigameGame:
         
         return self.problem
 
-    async def answer_question(self, question: str) -> str:
+    async def answer_question(self, question: str) -> Tuple[bool, str]:
         """
         理由と質問を受け取り、はい、いいえ、わからないのいずれかの答えを生成する
         正解だった場合はTrueを返す
