@@ -1,83 +1,83 @@
-# Testing Guide
+# テスト・ガイド
 
-This document explains how to run and write tests for the Discord TTS Bot.
+このドキュメントはDiscord TTSボットのテストの実行方法と記述方法について説明します。
 
-## Running Tests
+## テストの実行
 
-### Prerequisites
+### 前提条件
 
-- Python 3.12 or later
+- Python 3.12以降
 - Poetry
 
-### Running All Tests
+### すべてのテストの実行
 
-To run all tests, execute:
+すべてのテストを実行するには、次のコマンドを実行します：
 
 ```bash
 poetry run python src/test_runner.py
 ```
 
-### Environment Variables for Testing
+### テスト用環境変数
 
-Tests that interact with external services (like Google's Gemini API) require API keys. For CI environments, these are provided as GitHub Secrets. For local development, you can set them in a `.env` file or directly in your environment.
+外部サービス（GoogleのGemini APIなど）と連携するテストではAPIキーが必要です。CI環境では、これらはGitHubシークレットとして提供されます。ローカル開発では、`.env`ファイルまたは環境に直接設定できます。
 
-Required environment variables for tests:
-- `DISCORD_TOKEN`: Discord bot token
-- `GEMINI_API_KEY`: Google Gemini API key
+テストに必要な環境変数：
+- `DISCORD_TOKEN`: Discordボットトークン
+- `GEMINI_API_KEY`: Google Gemini APIキー
 
-If these environment variables are not available, tests that require them will be skipped with an appropriate message.
+これらの環境変数が利用できない場合、それらを必要とするテストは適切なメッセージとともにスキップされます。
 
-## Writing Tests
+## テストの作成
 
-### Test Organization
+### テストの構成
 
-Tests are organized alongside their respective modules:
+テストは対応するモジュールと共に構成されています：
 
-- `umigame/umigame_test.py`: Tests for the umigame module
-- `yomiage/voicebox_test.py`: Tests for the voicebox module
-- `yomiage/yomiage_test.py`: Tests for the yomiage module
+- `umigame/umigame_test.py`: うみがめモジュールのテスト
+- `yomiage/voicebox_test.py`: ボイスボックスモジュールのテスト
+- `yomiage/yomiage_test.py`: 読み上げモジュールのテスト
 
-### Testing Patterns
+### テストのパターン
 
-1. **Mocking External Dependencies**
+1. **外部依存のモック**
    
-   For functions that rely on external services or APIs, use the `unittest.mock` module to mock responses:
+   外部サービスやAPIに依存する関数には、`unittest.mock`モジュールを使用してレスポンスをモックします：
 
    ```python
    @patch('google.genai.Client')
    @patch('config.GEMINI_API_KEY', 'mock_api_key')
    def test_gemini_generate_mock(self, mock_client):
-       # Test implementation
+       # テスト実装
    ```
 
-2. **Testing Async Functions**
+2. **非同期関数のテスト**
    
-   For async functions, use a test loop to execute the coroutines:
+   非同期関数の場合は、テストループを使用してコルーチンを実行します：
 
    ```python
    def setUp(self):
-       # Create a new event loop for each test
+       # 各テストごとに新しいイベントループを作成
        self.loop = asyncio.new_event_loop()
        asyncio.set_event_loop(self.loop)
 
    def tearDown(self):
-       # Close the event loop after each test
+       # 各テスト後にイベントループを閉じる
        self.loop.close()
        
    def test_async_function(self):
        result = self.loop.run_until_complete(some_async_function())
    ```
 
-3. **Skipping Tests**
+3. **テストのスキップ**
    
-   If a test requires specific environment variables, use conditional skipping:
+   テストに特定の環境変数が必要な場合は、条件付きスキップを使用します：
 
    ```python
-   @unittest.skipIf(not getattr(config, 'GEMINI_API_KEY', None), "GEMINI_API_KEY is not set")
+   @unittest.skipIf(not getattr(config, 'GEMINI_API_KEY', None), "GEMINI_API_KEYが設定されていません")
    def test_gemini_generate_real_api(self):
-       # Test implementation for real API call
+       # 実際のAPI呼び出しのためのテスト実装
    ```
 
-## Continuous Integration
+## 継続的インテグレーション
 
-This project uses GitHub Actions for CI. The workflow is defined in `.github/workflows/tests.yml` and runs automatically on pushes to the main branch and on pull requests.
+このプロジェクトではGitHub ActionsをCIに使用しています。ワークフローは`.github/workflows/tests.yml`で定義されており、メインブランチへのプッシュとプルリクエストで自動的に実行されます。
