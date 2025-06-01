@@ -18,7 +18,6 @@
 erDiagram
     servers {
         bigint server_id PK
-        varchar(255) server_name
         timestamp created_at
         timestamp updated_at
     }
@@ -26,7 +25,6 @@ erDiagram
     users {
         bigint user_id PK
         varchar(255) username
-        varchar(255) display_name
         timestamp created_at
         timestamp updated_at
     }
@@ -52,9 +50,9 @@ erDiagram
         timestamp updated_at
     }
     
-    servers ||--o{ server_dictionaries : "has"
-    users ||--o{ user_voice_settings : "has"
-    servers ||--o{ user_voice_settings : "configured_for"
+    servers ||--o{ server_dictionaries : ""
+    users ||--o{ user_voice_settings : ""
+    servers ||--o{ user_voice_settings : ""
 ```
 
 ### テーブルの説明
@@ -62,14 +60,12 @@ erDiagram
 #### 1. servers テーブル
 Discordサーバーの情報を管理するテーブル
 - `server_id`: DiscordサーバーID（主キー）
-- `server_name`: サーバー名
 - `created_at`, `updated_at`: 作成・更新日時
 
 #### 2. users テーブル
 Discordユーザーの情報を管理するテーブル
 - `user_id`: DiscordユーザーID（主キー）
 - `username`: ユーザー名
-- `display_name`: 表示名
 - `created_at`, `updated_at`: 作成・更新日時
 
 #### 3. server_dictionaries テーブル
