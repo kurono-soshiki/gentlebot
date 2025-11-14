@@ -81,19 +81,24 @@ def setup(tree: discord.app_commands.CommandTree, client: discord.Client):
         description="現在のボイスチャンネルに接続します。"
     )
     async def join(ctx: discord.Interaction):
+        await ctx.response.defer()
+        
         if ctx.user.voice is None:
-            await ctx.response.send_message("あなたはボイスチャンネルに接続していません。")
+            await ctx.followup.send("あなたはボイスチャンネルに接続していません。")
             return
         elif ctx.guild.voice_client is not None:
             if ctx.guild.voice_client.channel == ctx.user.voice.channel:
-                await ctx.response.send_message("すでに接続しています。")
+                await ctx.followup.send("すでに接続しています。")
                 return
+        
         await ctx.user.voice.channel.connect()
+        
         if ctx.channel.guild.id not in dict_db["server_settings"]:
             dict_db["server_settings"][ctx.channel.guild.id] = {"read_channel": ctx.channel.id}
         else:
             dict_db["server_settings"][ctx.channel.guild.id]["read_channel"] = ctx.channel.id
-        await ctx.response.send_message(f"接続しました。テキストチャンネル <#{ctx.channel.id}> を読み上げ対象に設定しました。")
+        
+        await ctx.followup.send(f"接続しました。テキストチャンネル <#{ctx.channel.id}> を読み上げ対象に設定しました。")
 
     # /leave
     @tree.command(
@@ -101,11 +106,14 @@ def setup(tree: discord.app_commands.CommandTree, client: discord.Client):
         description="ボイスチャンネルから切断します。"
     )
     async def leave(ctx: discord.Interaction):
+        await ctx.response.defer()
+        
         if ctx.guild.voice_client is None:
-            await ctx.response.send_message("接続していません。")
+            await ctx.followup.send("接続していません。")
             return
+        
         await ctx.guild.voice_client.disconnect()
-        await ctx.response.send_message("切断しました。")
+        await ctx.followup.send("切断しました。")
 
     async def autocomplete_style(
         ctx: discord.Interaction,
@@ -127,6 +135,8 @@ def setup(tree: discord.app_commands.CommandTree, client: discord.Client):
         speaker=voicevox.build_speaker_choices()[0:25]
     )
     async def set_voice(ctx: discord.Interaction, speaker: str):
+        await ctx.response.defer()
+        
         speaker_name = speaker
         speaker_id = voicevox.get_speaker_id(speaker_name)
         if ctx.user.id in dict_db["user_settings"]:
@@ -134,7 +144,7 @@ def setup(tree: discord.app_commands.CommandTree, client: discord.Client):
             dict_db["user_settings"][ctx.user.id]["speaker_id"] = speaker_id
         else:
             dict_db["user_settings"][ctx.user.id] = {"speaker_name": speaker_name, "speaker_id": speaker_id}
-        await ctx.response.send_message(f"音声を {speaker_name}({voicevox.get_speaker_style_name(speaker_id)}) に設定しました。")
+        await ctx.followup.send(f"音声を {speaker_name}({voicevox.get_speaker_style_name(speaker_id)}) に設定しました。")
 
     # /set_voice_style
     @tree.command(
@@ -145,6 +155,8 @@ def setup(tree: discord.app_commands.CommandTree, client: discord.Client):
         style=autocomplete_style
     )
     async def set_voice_style(ctx: discord.Interaction, style: str):
+        await ctx.response.defer()
+        
         speaker_name = dict_db["user_settings"].get(ctx.user.id, {}).get("speaker_name", "ずんだもん")
         speaker_id = voicevox.get_speaker_id(speaker_name, style) or 3
         if ctx.user.id in dict_db["user_settings"]:
@@ -153,7 +165,7 @@ def setup(tree: discord.app_commands.CommandTree, client: discord.Client):
             dict_db["user_settings"][ctx.user.id] = {"speaker_id": speaker_id}
         if "speaker_name" not in dict_db["user_settings"][ctx.user.id]:
             dict_db["user_settings"][ctx.user.id]["speaker_name"] = "ずんだもん"
-        await ctx.response.send_message(f"声色を {dict_db['user_settings'][ctx.user.id]['speaker_name']}({voicevox.get_speaker_style_name(speaker_id)}) に設定しました。")
+        await ctx.followup.send(f"声色を {dict_db['user_settings'][ctx.user.id]['speaker_name']}({voicevox.get_speaker_style_name(speaker_id)}) に設定しました。")
 
     # /set_speed
     @tree.command(
@@ -214,8 +226,6 @@ def setup(tree: discord.app_commands.CommandTree, client: discord.Client):
             content = re.sub(r'[^\w\s]', '', content)
             content = content.replace("゛", "")
             content = content.replace("゜", "")
-            if "おちんほ" in content:
-                content = content.replace("おちんほ", "おちんぽ")
             content = re.sub(r'https?://[\w/:%#\$&\?\(\)~\.=\+\-]+', 'URL省略', content)
             if len(content) > 100:
                 content = content[:100] + "以下省略"
