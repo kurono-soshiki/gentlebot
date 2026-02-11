@@ -1,27 +1,26 @@
-[tool.poetry]
+[project]
 name = "discordbot"
 version = "0.1.0"
 description = ""
-authors = ["yootako <yootako03@gamil.com>"]
-# readme = "README.md"
-package-mode = false
+authors = [{name = "yootako", email = "yootako03@gamil.com"}]
+requires-python = ">=3.12"
 
-[tool.poetry.dependencies]
-python = "^3.12"
-requests = "^2.32.3"
-yt-dlp = "^2024.11.4"
-python-dotenv = "^1.0.1"
-discord-py = {extras = ["voice"], version = "^2.4.0"}
-google-genai = "^1.14.0"
+dependencies = [
+    "requests>=2.32.3",
+    "yt-dlp>=2024.11.4",
+    "python-dotenv>=1.0.1",
+    "discord-py[voice]>=2.4.0",
+    "google-genai>=1.14.0",
+    "aiosqlite>=0.20.0",
+    "aiohttp>=3.9.0",
+]
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.4.0"
-pytest-asyncio = "^0.23.0"
-pytest-cov = "^4.1.0"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["src"]
