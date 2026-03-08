@@ -1,11 +1,11 @@
 import sys
 import os
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import unittest
-from unittest.mock import patch, MagicMock, AsyncMock, mock_open
+from unittest.mock import patch, MagicMock, AsyncMock
 import asyncio
-import json
 from yomiage.voicebox import VoiceBox
 
 
@@ -14,21 +14,10 @@ class TestVoiceBox(unittest.TestCase):
         """ヘルパー: モックデータでVoiceBoxを初期化"""
         if mock_data is None:
             mock_data = [
-                {
-                    "name": "テスト話者1",
-                    "styles": [
-                        {"name": "ノーマル", "id": "1"}
-                    ]
-                },
-                {
-                    "name": "テスト話者2",
-                    "styles": [
-                        {"name": "ノーマル", "id": "2"},
-                        {"name": "怒り", "id": "3"}
-                    ]
-                }
+                {"name": "テスト話者1", "styles": [{"name": "ノーマル", "id": "1"}]},
+                {"name": "テスト話者2", "styles": [{"name": "ノーマル", "id": "2"}, {"name": "怒り", "id": "3"}]},
             ]
-        with patch.object(VoiceBox, '_load_local_speakers', return_value=mock_data):
+        with patch.object(VoiceBox, "_load_local_speakers", return_value=mock_data):
             return VoiceBox()
 
     def test_init_with_local_file(self):
@@ -40,16 +29,14 @@ class TestVoiceBox(unittest.TestCase):
         self.assertEqual(voice_box.speaker_list[1]["id"], "2")
 
     def test_get_voice(self):
-        voice_box = self._make_voicebox([
-            {"name": "テスト話者", "styles": [{"name": "ノーマル", "id": "1"}]}
-        ])
+        voice_box = self._make_voicebox([{"name": "テスト話者", "styles": [{"name": "ノーマル", "id": "1"}]}])
 
         # aiohttp.ClientSessionのモック
         mock_session = AsyncMock()
         mock_audio_resp = AsyncMock()
         mock_audio_resp.json = AsyncMock(return_value={"key": "value"})
         mock_synth_resp = AsyncMock()
-        mock_synth_resp.read = AsyncMock(return_value=b'audio_data')
+        mock_synth_resp.read = AsyncMock(return_value=b"audio_data")
 
         mock_session.__aenter__ = AsyncMock(return_value=mock_session)
         mock_session.__aexit__ = AsyncMock(return_value=False)
@@ -65,28 +52,19 @@ class TestVoiceBox(unittest.TestCase):
 
         mock_session.post = MagicMock(side_effect=[mock_audio_cm, mock_synth_cm])
 
-        with patch('aiohttp.ClientSession', return_value=mock_session):
+        with patch("aiohttp.ClientSession", return_value=mock_session):
             result = asyncio.run(voice_box.get_voice("テストテキスト", "1", 1.0))
 
-        self.assertEqual(result, b'audio_data')
+        self.assertEqual(result, b"audio_data")
         self.assertEqual(mock_session.post.call_count, 2)
 
     def test_get_speaker_id(self):
-        voice_box = self._make_voicebox([
-            {
-                "name": "テスト話者1",
-                "styles": [
-                    {"name": "ノーマル", "id": "1"},
-                    {"name": "怒り", "id": "2"}
-                ]
-            },
-            {
-                "name": "テスト話者2",
-                "styles": [
-                    {"name": "ノーマル", "id": "3"}
-                ]
-            }
-        ])
+        voice_box = self._make_voicebox(
+            [
+                {"name": "テスト話者1", "styles": [{"name": "ノーマル", "id": "1"}, {"name": "怒り", "id": "2"}]},
+                {"name": "テスト話者2", "styles": [{"name": "ノーマル", "id": "3"}]},
+            ]
+        )
 
         self.assertEqual(voice_box.get_speaker_id("テスト話者1"), "1")
         self.assertEqual(voice_box.get_speaker_id("テスト話者1", "怒り"), "2")
@@ -95,20 +73,14 @@ class TestVoiceBox(unittest.TestCase):
         self.assertIsNone(voice_box.get_speaker_id("テスト話者1", "存在しないスタイル"))
 
     def test_get_speaker_style_name(self):
-        voice_box = self._make_voicebox([
-            {
-                "name": "テスト話者1",
-                "styles": [
-                    {"name": "ノーマル", "id": 1},
-                    {"name": "怒り", "id": 2}
-                ]
-            }
-        ])
+        voice_box = self._make_voicebox(
+            [{"name": "テスト話者1", "styles": [{"name": "ノーマル", "id": 1}, {"name": "怒り", "id": 2}]}]
+        )
 
         self.assertEqual(voice_box.get_speaker_style_name(1), "ノーマル")
         self.assertEqual(voice_box.get_speaker_style_name(2), "怒り")
         self.assertIsNone(voice_box.get_speaker_style_name(999))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

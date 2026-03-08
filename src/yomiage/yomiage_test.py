@@ -1,10 +1,10 @@
 import sys
 import os
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import unittest
-from unittest.mock import patch, MagicMock, AsyncMock
-import discord
+from unittest.mock import patch
 from yomiage.yomiage import dict_db, voice_queues, processing_queues, preprocess_text
 
 
@@ -55,14 +55,15 @@ class TestYomiageFunctions(unittest.TestCase):
         self.assertEqual(dict_db["server_settings"], {})
         self.assertEqual(dict_db["user_settings"], {})
 
-    @patch('discord.app_commands.CommandTree')
-    @patch('discord.Client')
+    @patch("discord.app_commands.CommandTree")
+    @patch("discord.Client")
     def test_setup_registers_commands(self, mock_client, mock_tree):
         """Test that setup registers the expected commands"""
         from yomiage.yomiage import setup
+
         setup(mock_tree, mock_client)
         self.assertGreaterEqual(mock_tree.command.call_count, 1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

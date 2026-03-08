@@ -25,9 +25,6 @@ $ uv run python src/main.py
 $ uv run python -m pytest
 ```
 
-`mise.toml` では Docker と合わせて Python 3.12 を使うようにしています。
-Docker 側もプロジェクト直下の `.venv` を使わず、コンテナ内の専用仮想環境を使うようにしてあるため、ホスト側の Python バージョン差分に引っ張られにくくなっています。
-
 ```bash
 # 依存関係のインストール
 $ uv sync
@@ -37,6 +34,26 @@ $ uv run python src/main.py
 
 # テストの実行
 $ uv run python -m pytest
+```
+
+### Lint / Format
+
+```bash
+# lint
+$ uv run ruff check src
+
+# format
+$ uv run ruff format src
+```
+
+### pre-commit
+
+```bash
+# git hook をインストール
+$ uv run pre-commit install
+
+# 全ファイルに対して手動実行
+$ uv run pre-commit run --all-files
 ```
 
 ## 読み上げ使い方

@@ -17,6 +17,23 @@
 uv run python src/test_runner.py
 ```
 
+### Lint の実行
+
+```bash
+uv run ruff check src
+uv run ruff format src
+```
+
+### pre-commit のセットアップと実行
+
+```bash
+# 初回のみ
+uv run pre-commit install
+
+# 任意で全体実行
+uv run pre-commit run --all-files
+```
+
 ### テスト用環境変数
 
 外部サービス（GoogleのGemini APIなど）と連携するテストではAPIキーが必要です。CI環境では、これらはGitHubシークレットとして提供されます。ローカル開発では、`.env`ファイルまたは環境に直接設定できます。
