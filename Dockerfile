@@ -6,6 +6,10 @@ RUN apt-get update && apt-get install -y ffmpeg curl
 # Set the working directory
 WORKDIR /app
 
+# Keep the project virtual environment outside the bind-mounted source tree.
+ENV UV_PROJECT_ENVIRONMENT=/opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 

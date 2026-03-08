@@ -7,6 +7,26 @@ $ sudo docker compose up -d --build
 ## 開発環境
 
 パッケージ管理には [uv](https://docs.astral.sh/uv/) を使用しています。
+また、ローカルのツールチェイン管理には [mise](https://mise.jdx.dev/) を使用できます。
+
+### mise を使う場合
+
+```bash
+# mise が使える状態でツールを揃える
+$ mise install
+
+# 依存関係のインストール
+$ uv sync
+
+# botの起動
+$ uv run python src/main.py
+
+# テストの実行
+$ uv run python -m pytest
+```
+
+`mise.toml` では Docker と合わせて Python 3.12 を使うようにしています。
+Docker 側もプロジェクト直下の `.venv` を使わず、コンテナ内の専用仮想環境を使うようにしてあるため、ホスト側の Python バージョン差分に引っ張られにくくなっています。
 
 ```bash
 # 依存関係のインストール
@@ -16,7 +36,7 @@ $ uv sync
 $ uv run python src/main.py
 
 # テストの実行
-$ uv run pytest
+$ uv run python -m pytest
 ```
 
 ## 読み上げ使い方
