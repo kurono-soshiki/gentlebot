@@ -3,8 +3,11 @@ services:
     build: .
     container_name: discord-bot
     restart: always
+    env_file:
+      - .env
     volumes:
       - .:/app
+      - bot-data:/app/data
     depends_on:
       - voicebox
 
@@ -13,3 +16,6 @@ services:
     container_name: voicebox
     ports:
       - "50021:50021"
+
+volumes:
+  bot-data:

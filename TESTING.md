@@ -7,14 +7,31 @@
 ### 前提条件
 
 - Python 3.12以降
-- Poetry
+- uv
 
 ### すべてのテストの実行
 
 すべてのテストを実行するには、次のコマンドを実行します：
 
 ```bash
-poetry run python src/test_runner.py
+uv run python src/test_runner.py
+```
+
+### Lint の実行
+
+```bash
+uv run ruff check src
+uv run ruff format src
+```
+
+### pre-commit のセットアップと実行
+
+```bash
+# 初回のみ
+uv run pre-commit install
+
+# 任意で全体実行
+uv run pre-commit run --all-files
 ```
 
 ### テスト用環境変数
@@ -40,7 +57,7 @@ poetry run python src/test_runner.py
 ### テストのパターン
 
 1. **外部依存のモック**
-   
+
    外部サービスやAPIに依存する関数には、`unittest.mock`モジュールを使用してレスポンスをモックします：
 
    ```python
@@ -51,7 +68,7 @@ poetry run python src/test_runner.py
    ```
 
 2. **非同期関数のテスト**
-   
+
    非同期関数の場合は、テストループを使用してコルーチンを実行します：
 
    ```python
@@ -63,13 +80,13 @@ poetry run python src/test_runner.py
    def tearDown(self):
        # 各テスト後にイベントループを閉じる
        self.loop.close()
-       
+
    def test_async_function(self):
        result = self.loop.run_until_complete(some_async_function())
    ```
 
 3. **テストのスキップ**
-   
+
    テストに特定の環境変数が必要な場合は、条件付きスキップを使用します：
 
    ```python

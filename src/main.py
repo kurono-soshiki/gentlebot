@@ -14,6 +14,8 @@ umigame_bot.setup(tree, client)
 
 @client.event
 async def on_ready():
+    # データベースを初期化し、設定をロード
+    await yomiage_bot.init()
     print(f'We have logged in as {client.user}')
     # グローバルコマンドの同期
     await tree.sync()

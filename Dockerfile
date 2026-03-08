@@ -6,14 +6,16 @@ RUN apt-get update && apt-get install -y ffmpeg curl
 # Set the working directory
 WORKDIR /app
 
-# Install poetry
-RUN curl -sSL https://install.python-poetry.org | python3
-ENV PATH="/root/.local/bin:/root/.poetry/bin:$PATH"
+# Keep the project virtual environment outside the bind-mounted source tree.
+ENV UV_PROJECT_ENVIRONMENT=/opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Poetryを使って依存関係をインストール
-COPY pyproject.toml poetry.lock /app/
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-interaction --no-root
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# 依存関係をインストール
+COPY pyproject.toml uv.lock /app/
+RUN uv sync --frozen --no-dev
 
 # アプリケーションをコピー
 COPY src/ /app/src/
@@ -22,5 +24,4 @@ COPY src/ /app/src/
 ENV PYTHONPATH=/app/src
 
 # Run the application
-CMD ["python3", "src/main.py"]
-
+CMD ["uv", "run", "python3", "src/main.py"]
